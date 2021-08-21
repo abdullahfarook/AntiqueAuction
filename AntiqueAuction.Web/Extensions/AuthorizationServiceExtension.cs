@@ -18,4 +18,10 @@ namespace AntiqueAuction.Web.Extensions
         }
       
     }
+
+    public static class AuthorizePolicy
+    {
+        public static string Regular = "regular";
+        public static string Admin = "admin";
+    }
 }

@@ -37,7 +37,7 @@ export class BaseService {
   public toPaginatedUrl(url:string){
     if(!url.includes('?'))
       url +='?'
-    return `${this.apiUrl}${url}&wrapwith=count,total-count`
+    return `${this.apiUrl}${url}&wrapwith=total-count`
   }
 }
 

@@ -30,9 +30,10 @@ export class ItemService extends BaseService {
       amount: amount
     }).toPromise();
   }
-  createOrUpdateAutoBidding(id: string, amount: number): Promise<void> {
+  createOrUpdateAutoBidding(id: string, maxAmount: number): Promise<void> {
     return this.generatedService.itemsPut(<AutomateBid>{
       itemId: id,
+      maxBidAmount:maxAmount
     }).toPromise();
   }
 
