@@ -230,7 +230,6 @@ export class NgPagination implements OnChanges {
   @Input() size: 'sm' | 'lg';
 
   constructor(config: NgPaginationConfig) {
-    console.log('config');
     this.disabled = config.disabled;
     this.boundaryLinks = config.boundaryLinks;
     this.directionLinks = config.directionLinks;
