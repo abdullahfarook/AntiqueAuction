@@ -1,0 +1,19 @@
+::ng-deep{
+    .countdown{
+        text-transform: uppercase;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        span {
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            font-size: 3rem;
+            margin-left: 0.8rem;
+        }
+    }
+    .justify-content-evenly{
+        justify-content: space-evenly;
+    }
+}
+
+

@@ -10,6 +10,8 @@ import { LoginComponent } from './routes/login/login.component';
 import { SharedModule } from './shared/shared.module';
 import { DetailComponent } from './routes/detail/detail.component';
 import { NotFoundComponent } from './routes/not-found/not-found.component';
+import { CountdownComponent } from './components/countdown/countdown.component';
+import { BidsHistoryComponent } from './components/bids-history/bids-history.component';
 
 
 @NgModule({
@@ -20,7 +22,9 @@ import { NotFoundComponent } from './routes/not-found/not-found.component';
     BannerComponent,
     GalleryItemComponent,
     DetailComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    CountdownComponent,
+    BidsHistoryComponent
   ],
   imports: [
     BrowserModule,

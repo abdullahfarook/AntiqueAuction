@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { PaginatorState } from './shared/components/paginator/model/paginator.model';
 
 @Component({
   selector: 'app-root',
