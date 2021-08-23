@@ -11,10 +11,10 @@
             <!--begin::Card-->
             <div class="card card-custom gutter-b">
                 <!--begin::Card Body-->
-                <div class=" d-flex rounded  flex-column flex-md-row flex-lg-column flex-xxl-row">
+                <div class=" d-flex rounded  flex-column flex-md-row flex-lg-column flex-xxl-row" *ngIf="(item$|async) as item">
                     <!--begin::Image-->
                     <div class="bgi-no-repeat bgi-position-center bgi-size-cover h-300px h-md-auto h-lg-300px h-xxl-auto mw-100 w-550px"
-                        style="background-image: url('/assets/img/1.png')"></div>
+                    [ngStyle]="{'background-image': 'url(' + api + '/img/'+item.image+')'}"></div>
                     <!--end::Image-->
                     <div class="card card-custom w-auto w-md-400px w-lg-auto w-xxl-400px ml-auto">
                         <!--begin::Body-->
@@ -27,9 +27,8 @@
                                     <!--begin: Title-->
                                     <div class="d-flex flex-column mr-auto">
                                         <a href="#"
-                                            class="text-dark text-hover-primary font-size-h4 font-weight-bolder mb-1">Nexa
-                                            - Next generation SAAS</a>
-                                        <span class="text-muted font-weight-bold">Creates Limitless possibilities</span>
+                                            class="text-dark text-hover-primary font-size-h4 font-weight-bolder mb-1">{{item.name}}</a>
+                                        <!-- <span class="text-muted font-weight-bold">{{item.description}}</span> -->
                                     </div>
                                     <!--end::Title-->
                                 </div>
@@ -38,26 +37,25 @@
                             </div>
                             <!--end::Info-->
                             <!--begin::Description-->
-                            <div class="mb-10 mt-5 font-weight-bold">I distinguish three main text objectives.First,
-                                your objective could be merely to inform people.A second be to persuade people.</div>
+                            <div class="mb-10 mt-5 font-weight-bold">{{item.description}}</div>
                             <!--end::Description-->
                             <!-- begin::Specs-->
                             <div class="mb-6">
                                 <div class="d-flex mb-3">
                                     <span class="text-dark-50 flex-root font-weight-bold">Price</span>
-                                    <span class="text-dark flex-root font-weight-bold">$9</span>
+                                    <span class="text-dark flex-root font-weight-bold">${{item.price}}</span>
                                 </div>
                                 <div class="d-flex mb-3">
                                     <span class="text-dark-50 flex-root font-weight-bold">Current Bid</span>
-                                    <span class="text-dark flex-root font-weight-bold">$10</span>
+                                    <span class="text-dark flex-root font-weight-bold">${{item.lastBid}}</span>
                                 </div>
                                 <div class="d-flex mb-3">
                                     <span class="text-dark-50 flex-root font-weight-bold">Start</span>
-                                    <span class="text-dark flex-root font-weight-bold">14 Oct, 18</span>
+                                    <span class="text-dark flex-root font-weight-bold">{{item.auctionStart| date}}</span>
                                 </div>
                                 <div class="d-flex mb-3">
                                     <span class="text-dark-50 flex-root font-weight-bold">End</span>
-                                    <span class="text-dark flex-root font-weight-bold">15 Jan, 17</span>
+                                    <span class="text-dark flex-root font-weight-bold">{{item.auctionEnd|date}}</span>
                                 </div>
                             </div>
                             <!-- end::Specs-->
@@ -78,7 +76,7 @@
                                                 <li class="navi-item">
                                                     <a class="navi-link flex-column ">
                                                         <input type="email" class="form-control" placeholder="Enter amount">
-                                                            <span class="form-text text-muted align-self-start ml-1">Must enter $11 or above</span>
+                                                            <span class="form-text text-muted align-self-start ml-1">Must enter {{item.lastBid+1} or above</span>
                                                     </a>
                                                 </li>
 

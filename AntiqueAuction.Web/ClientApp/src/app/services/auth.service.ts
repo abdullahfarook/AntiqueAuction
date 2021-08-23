@@ -39,7 +39,6 @@ export class AuthService {
       switchMap(X=> this.generatedApi.me()))
   }
   setToken(token: string) {
-    console.log('token')
     this.token = token;
     this.isAuthenticated$.next(true);
     this.setAuthUser(token);

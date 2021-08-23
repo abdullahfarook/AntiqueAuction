@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { Generated, AutoBid, AutomateBid, Item, PlaceBid } from 'src/generated/services';
 import { PageInfo, PageResult } from '../core/models/page-result';
 import { BaseService } from './base.service';
@@ -10,7 +12,7 @@ import { BaseService } from './base.service';
 })
 export class ItemService extends BaseService {
 
-  url: string = '/api/items';
+  url: string =environment.apiUrl+ '/api/items';
 
   constructor(private http: HttpClient, private generatedService: Generated) {
     super();
@@ -38,10 +40,17 @@ export class ItemService extends BaseService {
       )
     ).toPromise();
   }
-  addQuery = (q:string)=>{ 
-    if(!q.includes(this.url)){
-      q = this.url+'?'+q;
-    }
+
+  getItem(id:string):Observable<Item>{
+    var query = `${this.url}?id=${id}`
+
+    return this.http.get<Item[]>(query).pipe(
+      map(
+        (x)=>
+          x[0]
+      )
+    );
+      
   }
   placeBid(id: string, amount: number): Promise<void> {
     return this.generatedService.itemsPOST(<PlaceBid>{
