@@ -12,10 +12,10 @@
 									<!--end::Separator-->
 									<!--begin::Search Form-->
 									<div class="d-flex align-items-center" id="kt_subheader_search">
-										<span class="text-dark-50 font-weight-bold" id="kt_subheader_total">54 Total</span>
+										<span class="text-dark-50 font-weight-bold" id="kt_subheader_total">{{paginator.total}} Total</span>
 										<form class="ml-5">
 											<div class="input-group input-group-sm input-group-solid" style="max-width: 175px">
-												<input type="text" class="form-control" id="kt_subheader_search_form" placeholder="Search..." />
+												<input name="search" (keyup.enter)="submit()"  [(ngModel)]="search" type="text" class="form-control" id="kt_subheader_search_form" placeholder="Search..." />
 												<div class="input-group-append">
 													<span class="input-group-text">
 														<span class="svg-icon">
@@ -49,13 +49,13 @@
 												<ul class="navi navi-hover">
 													
 													<li class="navi-item">
-														<a href="#" class="navi-link">
-															<span class="navi-text">Asc</span>
+														<a  class="navi-link">
+															<span class="navi-text" (click)="priceSort = 'asc';submit()">Asc</span>
 														</a>
 													</li>
 													<li class="navi-item">
-														<a href="#" class="navi-link">
-															<span class="navi-text">Desc</span>
+														<a  class="navi-link">
+															<span class="navi-text" (click)="priceSort = 'desc';submit()">Desc</span>
 														</a>
 													</li>
 												</ul>
@@ -76,7 +76,7 @@
 								<!--begin::Row-->
 								<div class="row" >
 									<div class="col-xl-3 col-md-4 col-sm-6 my-2" *ngFor="let item of items">
-										<app-gallery-item></app-gallery-item>
+									<app-gallery-item [item]="item"></app-gallery-item>
 									</div>
 								</div>
 								<!--end::Row-->
@@ -85,6 +85,7 @@
 								<app-paginator
 								class="d-flex justify-content-between align-items-center flex-wrap"
 								[paginator]="paginator"
+								(paginate)="onPaginationChaged($event)"
 							  ></app-paginator>
 								<!--end::Pagination-->
 							</div>
