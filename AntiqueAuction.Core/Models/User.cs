@@ -13,7 +13,9 @@ namespace AntiqueAuction.Core.Models
         public string Username { get; protected set; } = null!;
         public string PasswordHash { get; protected set; } = null!;
         public string? ContactNo { get; protected set; }
-        public double AvailableAmount { get; protected set; }
+        public double WalletAmount { get; protected set; }
+        public double MaxBidAmount { get; protected set; }
+
 
 
         public virtual Address Address { get; protected set; } = null!;
@@ -22,12 +24,13 @@ namespace AntiqueAuction.Core.Models
         private readonly MultiObjectLocker<Guid> _locker = new MultiObjectLocker<Guid>();
 
         protected User(){}
-        public User(string name,string username,string passwordHash,double availableAmount,Address address)
+        public User(string name,string username,string passwordHash,double walletAmount, double maxBidAmount, Address address)
         {
             Name = name;
             Username = username;
             PasswordHash = passwordHash;
-            AvailableAmount = availableAmount;
+            WalletAmount = walletAmount;
+            MaxBidAmount = maxBidAmount;
             Address = address;
         }
 
@@ -36,9 +39,9 @@ namespace AntiqueAuction.Core.Models
             // enter a new locker object for each UserId if it's not already in dictionary
             lock (_locker.Enter(Id))
             {
-                if (AvailableAmount - money < 0)
+                if (WalletAmount - money < 0)
                     throw new UnprocessableException("Cannot Draw money which is greater than available money");
-                AvailableAmount -= money;
+                WalletAmount -= money;
                 _locker.Release(Id);
             }
             

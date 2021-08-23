@@ -60,7 +60,8 @@ namespace AntiqueAuction.Web.Middlewares
             response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = exception.Message;
             await response.WriteAsync(
                 JsonConvert.SerializeObject(
-                    new ErrorResponse(exception.Message, exception.Code, exception.Message, context.Request.Headers["CorrelationId"].ToString(), context.TraceIdentifier)));
+                    new ErrorResponse(exception.GetType().Name.Replace("Exception", "Error"), exception.Code, 
+                        exception.Message, context.Request.Headers["CorrelationId"].ToString(), context.TraceIdentifier)));
         }
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {

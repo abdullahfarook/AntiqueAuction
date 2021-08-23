@@ -45,9 +45,12 @@ namespace AntiqueAuction.Web.Extensions
         public static User[] GetSeedUsers()
             => new[]
             {
-                new User("Abdullah Farooq", "abd@scopic.com", "abc123", 1000,
+                new User("Abdullah Farooq", "user1", "abc123", 1000,500,
                         new Address("123 Revenue", "NewYork", "Texas", "US", "75888"))
-                    .SetProperty("Id", DummyUser.Id)
+                    .SetProperty("Id", DummyUser.Id),
+                new User("Oksana", "user2", "oks123", 1000,500,
+                        new Address("123 Revenue", "NewYork", "Texas", "US", "75888"))
+                    .SetProperty("Id", Guid.Parse("6A73190F-2440-4B45-AEA8-7792C09969A1"))
             };
 
         private static readonly Guid[] Items =
@@ -71,43 +74,43 @@ namespace AntiqueAuction.Web.Extensions
             => new[]
             {
                 new Item("Jug", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(1),
-                    "0C65E2BA-D974-49D9-98B4-A80036757AB1","This is very good Jug and have beautiful design ")
+                    "1.png","This is very good Jug and have beautiful design ")
                     .SetProperty("Id",Items[0]),
                 new Item("Glass", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(2),
-                        "0C65E2BA-D974-49D9-98B4-A80036757AB2","Good Glass and have beautiful design ")
+                        "2.png","Good Glass and have beautiful design ")
                     .SetProperty("Id",Items[1]),
                 new Item("Cup", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(3),
-                        "0C65E2BA-D974-49D9-98B4-A80036757AB3","Good Cup and have beautiful design ")
+                        "3.png","Good Cup and have beautiful design ")
                     .SetProperty("Id",Items[2]),
                 new Item("Place", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(4),
-                        "0C65E2BA-D974-49D9-98B4-A80036757AB4","Good Place and have beautiful design ")
+                        "4.png","Good Place and have beautiful design ")
                     .SetProperty("Id",Items[3]),
                 new Item("Table", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(5),
-                        "0C65E2BA-D974-49D9-98B4-A80036757AB5","Good Table and have beautiful design ")
+                        "5.png","Good Table and have beautiful design ")
                     .SetProperty("Id",Items[4]),
                 new Item("Door", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(6),
-                        "0C65E2BA-D974-49D9-98B4-A80036757AB6","Good Door and have beautiful design ")
+                        "6.png","Good Door and have beautiful design ")
                     .SetProperty("Id",Items[5]),
                 new Item("Ceiling", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(7),
-                        "0C65E2BA-D974-49D9-98B4-A80036757AB7","Good Ceiling and have beautiful design ")
+                        "7.png","Good Ceiling and have beautiful design ")
                     .SetProperty("Id",Items[6]),
                 new Item("Laptop", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(8),
-                        "0C65E2BA-D974-49D9-98B4-A80036757AB8","Good laptop and have beautiful design ")
+                        "8.png","Good laptop and have beautiful design ")
                     .SetProperty("Id",Items[7]),
                 new Item("Processor", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(9),
-                        "0C65E2BA-D974-49D9-98B4-A80036757AB9","Good Processor and have beautiful design ")
+                        "9.png","Good Processor and have beautiful design ")
                     .SetProperty("Id",Items[8]),
                 new Item("Chair", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(10),
-                        "0C65E2BA-D974-49D9-98B4-A80036757A11","Good Chair and have beautiful design ")
+                        "10.png","Good Chair and have beautiful design ")
                     .SetProperty("Id",Items[9]),
                 new Item("AC", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(11),
-                        "0C65E2BA-D974-49D9-98B4-A80036757A12","Good AC and have beautiful design ")
+                        "11.png","Good AC and have beautiful design ")
                     .SetProperty("Id",Items[10]),
                 new Item("Hand Free", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(12),
-                        "0C65E2BA-D974-49D9-98B4-A80036757A13","Good Hand Free and have beautiful design ")
+                        "12.png","Good Hand Free and have beautiful design ")
                     .SetProperty("Id",Items[11]),
                 new Item("Window", 100, true, DummyUser.Id, DateTime.UtcNow, DateTime.UtcNow.AddDays(13),
-                        "0C65E2BA-D974-49D9-98B4-A80036757A14","Good Window and have beautiful design ")
+                        "13.png","Good Window and have beautiful design ")
                     .SetProperty("Id",Items[12]),
 
             };

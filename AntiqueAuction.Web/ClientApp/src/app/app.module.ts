@@ -12,6 +12,9 @@ import { DetailComponent } from './routes/detail/detail.component';
 import { NotFoundComponent } from './routes/not-found/not-found.component';
 import { CountdownComponent } from './components/countdown/countdown.component';
 import { BidsHistoryComponent } from './components/bids-history/bids-history.component';
+import { ProfileComponent } from './profile/profile.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptor } from './core/interceptors/JwtInterceptor';
 
 
 @NgModule({
@@ -24,14 +27,15 @@ import { BidsHistoryComponent } from './components/bids-history/bids-history.com
     DetailComponent,
     NotFoundComponent,
     CountdownComponent,
-    BidsHistoryComponent
+    BidsHistoryComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
     SharedModule,
     AppRoutingModule,
   ],
-  providers: [],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

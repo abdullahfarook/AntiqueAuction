@@ -30,6 +30,64 @@ export class ApiGenerated extends BaseService {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    auth(body: GenerateToken | undefined): Observable<GenerateTokenResponse> {
+        let url_ = this.baseUrl + "/api/auth";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("post", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processAuth(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAuth(<any>response_);
+                } catch (e) {
+                    return <Observable<GenerateTokenResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GenerateTokenResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAuth(response: HttpResponseBase): Observable<GenerateTokenResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GenerateTokenResponse.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GenerateTokenResponse>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     bidsHistory(): Observable<BidHistory[]> {
@@ -498,6 +556,82 @@ export interface IBidHistory {
     user?: IUser;
 }
 
+export class GenerateToken implements IGenerateToken {
+    username!: string;
+    password!: string;
+
+    constructor(data?: IGenerateToken) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.username = _data["username"];
+            this.password = _data["password"];
+        }
+    }
+
+    static fromJS(data: any): GenerateToken {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateToken();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["username"] = this.username;
+        data["password"] = this.password;
+        return data; 
+    }
+}
+
+export interface IGenerateToken {
+    username: string;
+    password: string;
+}
+
+export class GenerateTokenResponse implements IGenerateTokenResponse {
+    token?: string | undefined;
+
+    constructor(data?: IGenerateTokenResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.token = _data["token"];
+        }
+    }
+
+    static fromJS(data: any): GenerateTokenResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateTokenResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["token"] = this.token;
+        return data; 
+    }
+}
+
+export interface IGenerateTokenResponse {
+    token?: string | undefined;
+}
+
 export class Item implements IItem {
     readonly id?: string;
     readonly createdOn?: Date;
@@ -685,7 +819,8 @@ export class User implements IUser {
     readonly username?: string | undefined;
     readonly passwordHash?: string | undefined;
     readonly contactNo?: string | undefined;
-    readonly availableAmount?: number;
+    readonly walletAmount?: number;
+    readonly maxBidAmount?: number;
     address?: Address;
     autoBids?: AutoBid[] | undefined;
     itemHistories?: BidHistory[] | undefined;
@@ -723,7 +858,8 @@ export class User implements IUser {
             (<any>this).username = _data["username"];
             (<any>this).passwordHash = _data["passwordHash"];
             (<any>this).contactNo = _data["contactNo"];
-            (<any>this).availableAmount = _data["availableAmount"];
+            (<any>this).walletAmount = _data["walletAmount"];
+            (<any>this).maxBidAmount = _data["maxBidAmount"];
             this.address = _data["address"] ? Address.fromJS(_data["address"]) : <any>undefined;
             if (Array.isArray(_data["autoBids"])) {
                 this.autoBids = [] as any;
@@ -754,7 +890,8 @@ export class User implements IUser {
         data["username"] = this.username;
         data["passwordHash"] = this.passwordHash;
         data["contactNo"] = this.contactNo;
-        data["availableAmount"] = this.availableAmount;
+        data["walletAmount"] = this.walletAmount;
+        data["maxBidAmount"] = this.maxBidAmount;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         if (Array.isArray(this.autoBids)) {
             data["autoBids"] = [];
@@ -778,7 +915,8 @@ export interface IUser {
     username?: string | undefined;
     passwordHash?: string | undefined;
     contactNo?: string | undefined;
-    availableAmount?: number;
+    walletAmount?: number;
+    maxBidAmount?: number;
     address?: IAddress;
     autoBids?: IAutoBid[] | undefined;
     itemHistories?: IBidHistory[] | undefined;

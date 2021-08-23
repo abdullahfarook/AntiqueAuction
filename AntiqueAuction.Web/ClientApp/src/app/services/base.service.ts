@@ -25,12 +25,12 @@ export class BaseService {
   }
   transformOptions(options: { headers: HttpHeaders; }): Promise<any> {
     return new Promise((res, rej) => {
-      const token = this.token;
-      if (token) {
-        let headers: HttpHeaders = options.headers;
-        headers = headers.append('Authorization', 'Bearer ' + token);
-        options.headers = headers;
-      }
+      // const token = this.token;
+      // if (token) {
+      //   let headers: HttpHeaders = options.headers;
+      //   headers = headers.append('Authorization', 'Bearer ' + token);
+      //   options.headers = headers;
+      // }
       res(options);
     });
   }

@@ -9,4 +9,12 @@ namespace AntiqueAuction.Application.Auth.Dtos
         [Required]
         public string Password { get; set; }
     }
+    public class GenerateTokenResponse
+    {
+        public GenerateTokenResponse(string token)
+        {
+            Token = token;
+        }
+        public string Token { get; set; }
+    }
 }

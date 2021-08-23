@@ -16,7 +16,8 @@ namespace AntiqueAuction.Infrastructure.Migrations
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContactNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AvailableAmount = table.Column<double>(type: "float", nullable: false),
+                    WalletAmount = table.Column<double>(type: "float", nullable: false),
+                    MaxBidAmount = table.Column<double>(type: "float", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)

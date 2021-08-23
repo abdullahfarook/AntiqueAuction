@@ -34,7 +34,7 @@ namespace AntiqueAuction.Web
                     .RegisterInMemoryScheduler()
                     .RegisterMemoryEventBus(types)
                     .RegisterDbContext<AntiqueAuctionDbContext>(Configuration)
-                    .RegisterAuthorization()
+                    .RegisterAuthorizationAndAuthorization()
                     .RegisterRepositories(types)
                     .RegisterDomainServices(types)
                     .RegisterSpaService(Configuration);

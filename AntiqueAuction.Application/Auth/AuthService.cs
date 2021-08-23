@@ -14,5 +14,6 @@ namespace AntiqueAuction.Application.Auth
         {
             throw new NotImplementedException();
         }
+
     }
 }

@@ -135,7 +135,7 @@ namespace AntiqueAuction.Core.Models
                 throw new UnprocessableException($"Auction has ended against Id: {Id}");
 
             // Check if user has enough amount to spend on bidding
-            if(user.AvailableAmount-amount<0)
+            if(user.WalletAmount-amount<0)
                 throw new UnprocessableException($"User does not have enough money to spent upon auction");
 
             if (amount <= LastBid || amount <= Price)
