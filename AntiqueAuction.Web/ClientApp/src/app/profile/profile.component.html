@@ -1,42 +1,42 @@
 <!--begin::User-->
 
-						<div class="topbar-item mr-4 d-flex">
-							<a routerLink="login" class="btn font-weight-bolder btn-sm btn-primary">
-								Signin
-								</a>
-							<div *ngIf="!isAuthenticated" class="text" style="position: relative;top: 4px;">Abdullah Farooq</div>
-							<div *ngIf="!isAuthenticated" class="btn btn-icon btn-sm btn-clean btn-text-dark-75" id="kt_quick_user_toggle">
-								<span class="svg-icon svg-icon-lg">
-									<!--begin::Svg Icon | path:assets/media/svg/icons/General/User.svg-->
-									<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-										width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-										<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-											<polygon points="0 0 24 0 24 24 0 24" />
-											<path
-												d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z"
-												fill="#000000" fill-rule="nonzero" opacity="0.3" />
-											<path
-												d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z"
-												fill="#000000" fill-rule="nonzero" />
-										</g>
-									</svg>
-									<!--end::Svg Icon-->
-								</span>
-							</div>
-						</div>
-						<!--end::User-->
-						<!-- begin::User Panel-->
-<div id="kt_quick_user" class="offcanvas offcanvas-right p-10">
+<div class="topbar-item mr-4 d-flex" *ngIf="(authService.isAuthenticated$| async) as isAuth">
+	<a *ngIf="!isAuth" routerLink="login" class="btn font-weight-bolder btn-sm btn-primary">
+		Signin
+	</a>
+	<div *ngIf="isAuth" class="text" style="position: relative;top: 4px;">{{(user$| async)?.name}}</div>
+	<div *ngIf="isAuth" class="btn btn-icon btn-sm btn-clean btn-text-dark-75" (click)="toggleSidebar = !toggleSidebar">
+		<span class="svg-icon svg-icon-lg">
+			<!--begin::Svg Icon | path:assets/media/svg/icons/General/User.svg-->
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+				height="24px" viewBox="0 0 24 24" version="1.1">
+				<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+					<polygon points="0 0 24 0 24 24 0 24" />
+					<path
+						d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z"
+						fill="#000000" fill-rule="nonzero" opacity="0.3" />
+					<path
+						d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z"
+						fill="#000000" fill-rule="nonzero" />
+				</g>
+			</svg>
+			<!--end::Svg Icon-->
+		</span>
+	</div>
+</div>
+<!--end::User-->
+<!-- begin::User Panel-->
+<div id="kt_quick_user" [class.offcanvas-on]="toggleSidebar" class="offcanvas offcanvas-right p-10">
 	<!--begin::Header-->
 	<div class="offcanvas-header d-flex align-items-center justify-content-between pb-5">
 		<h3 class="font-weight-bold m-0">User Profile</h3>
-		<a href="#" class="btn btn-xs btn-icon btn-light btn-hover-primary" id="kt_quick_user_close">
+		<a class="btn btn-xs btn-icon btn-light btn-hover-primary" (click)="toggleSidebar = !toggleSidebar">
 			<i class="ki ki-close icon-xs text-muted"></i>
 		</a>
 	</div>
 	<!--end::Header-->
 	<!--begin::Content-->
-	<div class="offcanvas-content pr-5 mr-n5">
+	<div class="offcanvas-content pr-5 mr-n5" *ngIf="(user$ | async) as user">
 		<!--begin::Header-->
 		<div class="d-flex align-items-center mt-5">
 			<div class="symbol symbol-100 mr-5">
@@ -44,7 +44,7 @@
 				<i class="symbol-badge bg-success"></i>
 			</div>
 			<div class="d-flex flex-column">
-				<a href="#" class="font-weight-bold font-size-h5 text-dark-75 text-hover-primary">James Jones</a>
+				<a href="#" class="font-weight-bold font-size-h5 text-dark-75 text-hover-primary">{{user.name}}</a>
 				<div class="text-muted mt-1">Application Developer</div>
 				<div class="navi mt-2">
 					<a href="#" class="navi-item">
@@ -65,10 +65,11 @@
 									<!--end::Svg Icon-->
 								</span>
 							</span>
-							<span class="navi-text text-muted text-hover-primary">jm@softplus.com</span>
+							<span class="navi-text text-muted text-hover-primary">{{user.username}}</span>
 						</span>
 					</a>
-					<a href="#" class="btn btn-sm btn-light-primary font-weight-bolder py-2 px-5">Sign Out</a>
+					<a class="btn btn-sm btn-light-primary font-weight-bolder py-2 px-5"
+						(click)="authService.signOut()">Sign Out</a>
 				</div>
 			</div>
 		</div>
@@ -99,7 +100,7 @@
 						</div>
 					</div>
 					<div class="navi-text">
-						<div class="font-weight-bold">$1000</div>
+						<div class="font-weight-bold">${{user.walletAmount}}</div>
 						<div class="text-muted">Wallet
 						</div>
 					</div>
@@ -127,40 +128,43 @@
 							</span>
 						</div>
 					</div>
-					<div class="navi-text dropdown dropdown-inline">
-						<div class="font-weight-bold">$50 <span class="label label-light-danger label-inline font-weight-bold cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">update</span>
-							<div class="dropdown-menu p-2" >
+					<div class="navi-text dropdown dropdown-inline flex-column">
+						<div class="font-weight-bold">${{user.maxBidAmount}} <span
+								class="label label-light-danger label-inline font-weight-bold cursor-pointer"
+								data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">update</span>
+							<div class="dropdown-menu p-2">
 								<!--begin::Naviigation-->
 								<ul class="navi">
 									<li class="navi-item">
 										<a class="navi-link flex-column ">
-											<input type="email" class="form-control" placeholder="Enter amount">
-												<span class="form-text text-muted align-self-start ml-1">Must enter $11 or above</span>
+											<div class="text-danger" *ngIf="maxBidMsg">{{maxBidMsg}}</div>
+											<input type="number" #maxBid class="form-control"
+												placeholder="Enter amount">
+											<span class="form-text text-muted align-self-start ml-1">Must enter
+												{{user.maxBidAmount!+1}} or
+												above</span>
 										</a>
 									</li>
 
 									<li class="navi-separator mt-3 opacity-70"></li>
 									<li class="navi-footer pt-5 pb-4">
-										<a class="btn btn-light-primary font-weight-bolder btn-sm"
-											>Submit</a>
+										<a 
+											class="btn btn-light-primary font-weight-bolder btn-sm" 
+											(click)="updateMaxBid(+maxBid.value)">Submit</a>
 										<a class="btn btn-clean font-weight-bold btn-sm d-none" href="#"
 											data-toggle="tooltip" data-placement="right" title=""
 											data-original-title="Click to learn more...">Learn more</a>
 									</li>
 								</ul>
 								<!--end::Naviigation-->
-							</div></div>
+							</div>
+						</div>
 						<div class="dropdown dropdown-inline">
 							<div class="text-muted ">Max Bid
-								
+
 							</div>
-							
+
 						</div>
-						
-
-
-
-
 
 					</div>
 				</div>

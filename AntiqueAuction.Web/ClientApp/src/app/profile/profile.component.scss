@@ -1,0 +1,11 @@
+::ng-deep{
+    a{
+        &disabled{
+            disabled {
+                color: gray;
+                cursor: not-allowed;
+                text-decoration: underline;
+            }
+        }
+    }
+}

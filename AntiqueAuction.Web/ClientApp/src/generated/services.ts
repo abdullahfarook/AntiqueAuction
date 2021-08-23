@@ -18,7 +18,7 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 @Injectable({
     providedIn: 'root'
 })
-export class ApiGenerated extends BaseService {
+export class Generated extends BaseService {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -27,6 +27,59 @@ export class ApiGenerated extends BaseService {
         super();
         this.http = http;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : this.getBaseUrl("");
+    }
+
+    /**
+     * @return Success
+     */
+    me(): Observable<User> {
+        let url_ = this.baseUrl + "/api/auth/me";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processMe(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMe(<any>response_);
+                } catch (e) {
+                    return <Observable<User>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<User>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMe(response: HttpResponseBase): Observable<User> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = User.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<User>(<any>null);
     }
 
     /**
@@ -85,6 +138,60 @@ export class ApiGenerated extends BaseService {
             }));
         }
         return _observableOf<GenerateTokenResponse>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    maxBid(body: UpdateMaxBid | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/auth/max-bid";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("patch", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processMaxBid(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMaxBid(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMaxBid(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -150,7 +257,7 @@ export class ApiGenerated extends BaseService {
     /**
      * @return Success
      */
-    itemsGet(): Observable<Item[]> {
+    itemsAll(): Observable<Item[]> {
         let url_ = this.baseUrl + "/api/items";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -165,11 +272,11 @@ export class ApiGenerated extends BaseService {
         return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
             return this.http.request("get", url_, transformedOptions_);
         })).pipe(_observableMergeMap((response_: any) => {
-            return this.processItemsGet(response_);
+            return this.processItemsAll(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processItemsGet(<any>response_);
+                    return this.processItemsAll(<any>response_);
                 } catch (e) {
                     return <Observable<Item[]>><any>_observableThrow(e);
                 }
@@ -178,7 +285,7 @@ export class ApiGenerated extends BaseService {
         }));
     }
 
-    protected processItemsGet(response: HttpResponseBase): Observable<Item[]> {
+    protected processItemsAll(response: HttpResponseBase): Observable<Item[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -211,7 +318,7 @@ export class ApiGenerated extends BaseService {
      * @param body (optional) 
      * @return Success
      */
-    itemsPost(body: PlaceBid | undefined): Observable<void> {
+    itemsPOST(body: PlaceBid | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/items";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -229,11 +336,11 @@ export class ApiGenerated extends BaseService {
         return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
             return this.http.request("post", url_, transformedOptions_);
         })).pipe(_observableMergeMap((response_: any) => {
-            return this.processItemsPost(response_);
+            return this.processItemsPOST(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processItemsPost(<any>response_);
+                    return this.processItemsPOST(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -242,7 +349,7 @@ export class ApiGenerated extends BaseService {
         }));
     }
 
-    protected processItemsPost(response: HttpResponseBase): Observable<void> {
+    protected processItemsPOST(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -265,7 +372,7 @@ export class ApiGenerated extends BaseService {
      * @param body (optional) 
      * @return Success
      */
-    itemsPut(body: AutomateBid | undefined): Observable<void> {
+    itemsPUT(body: AutomateBid | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/items";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -283,11 +390,11 @@ export class ApiGenerated extends BaseService {
         return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
             return this.http.request("put", url_, transformedOptions_);
         })).pipe(_observableMergeMap((response_: any) => {
-            return this.processItemsPut(response_);
+            return this.processItemsPUT(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processItemsPut(<any>response_);
+                    return this.processItemsPUT(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -296,7 +403,7 @@ export class ApiGenerated extends BaseService {
         }));
     }
 
-    protected processItemsPut(response: HttpResponseBase): Observable<void> {
+    protected processItemsPUT(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -809,6 +916,46 @@ export interface IPlaceBid {
     itemId: string;
     userId: string;
     amount: number;
+}
+
+export class UpdateMaxBid implements IUpdateMaxBid {
+    amount?: number;
+    userId?: string;
+
+    constructor(data?: IUpdateMaxBid) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.amount = _data["amount"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateMaxBid {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateMaxBid();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["amount"] = this.amount;
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IUpdateMaxBid {
+    amount?: number;
+    userId?: string;
 }
 
 export class User implements IUser {

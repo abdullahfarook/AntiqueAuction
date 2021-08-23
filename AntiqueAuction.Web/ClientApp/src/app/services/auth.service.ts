@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ApiGenerated, GenerateToken, User } from 'src/generated/services';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
+import { Generated, GenerateToken, UpdateMaxBid, User } from 'src/generated/services';
 import { AuthUser } from '../core/models/auth-user';
 import * as jwtDecode from 'jwt-decode';
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   token: string | undefined;
-  isAuthenticated$: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
+  isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   authUser: AuthUser | undefined;
-  constructor(private generatedApi: ApiGenerated) {
+  constructor(private generatedApi: Generated,private router:Router) {
     const token = localStorage.getItem('token');
     if (token){
      this.setToken(token);
@@ -32,7 +33,13 @@ export class AuthService {
       )
       .toPromise();
   }
+  getMyDetails():Observable<User>{
+    return this.isAuthenticated$.pipe(
+      filter(x=>x),
+      switchMap(X=> this.generatedApi.me()))
+  }
   setToken(token: string) {
+    console.log('token')
     this.token = token;
     this.isAuthenticated$.next(true);
     this.setAuthUser(token);
@@ -44,8 +51,23 @@ export class AuthService {
       name: decode.given_name,
       username: decode.sub,
     };
+    this.getMyDetails();
   }
-   
+  signOut(){
+    console.log('sig')
+    this.delToken();
+    this.router.navigate(['login']);
+  }
+  delToken(){
+    this.token = undefined;
+    localStorage.removeItem('token');
+    this.isAuthenticated$.next(false);
+  }
+  updateMaxBid(amount:number):Observable<void>{
+    return this.generatedApi.maxBid(<UpdateMaxBid>{
+      amount
+    });
+  }
 }
 
 

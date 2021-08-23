@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { ApiGenerated, AutoBid, AutomateBid, Item, PlaceBid } from 'src/generated/services';
+import { Generated, AutoBid, AutomateBid, Item, PlaceBid } from 'src/generated/services';
 import { PageResult } from '../core/models/page-result';
 import { BaseService } from './base.service';
 
@@ -12,7 +12,7 @@ export class ItemService extends BaseService {
 
   url: string = '/api/items';
 
-  constructor(private http: HttpClient, private generatedService: ApiGenerated) {
+  constructor(private http: HttpClient, private generatedService: Generated) {
     super();
   }
   // get items
@@ -25,13 +25,13 @@ export class ItemService extends BaseService {
     ).toPromise();
   }
   placeBid(id: string, amount: number): Promise<void> {
-    return this.generatedService.itemsPost(<PlaceBid>{
+    return this.generatedService.itemsPOST(<PlaceBid>{
       itemId: id,
       amount: amount
     }).toPromise();
   }
   createOrUpdateAutoBidding(id: string, maxAmount: number): Promise<void> {
-    return this.generatedService.itemsPut(<AutomateBid>{
+    return this.generatedService.itemsPUT(<AutomateBid>{
       itemId: id,
       maxBidAmount:maxAmount
     }).toPromise();
