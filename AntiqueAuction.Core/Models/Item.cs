@@ -45,9 +45,9 @@ namespace AntiqueAuction.Core.Models
             Quantity = 1;
             Description = description;
         }
-
+        // ubiquitous language on outside 
         public void EnableAutoBid(User user, float incrementPerUnit)
-            => CreateOrUpdateAutoBid(user, incrementPerUnit);
+            => CreateOrUpdateAutoBid(user, incrementPerUnit); 
         public void CreateOrUpdateAutoBid(User user, float incrementPerUnit)
         {
             var autoBid = AutoBids.FirstOrDefault(x => x.UserId == user.Id);
@@ -101,7 +101,6 @@ namespace AntiqueAuction.Core.Models
             if (maxAutoBid is { } && maxAutoBid.User.MaxBidAmount > currentUser.MaxBidAmount)
             {
                 // store history of current user bidding 
-                //DrawMoneyAndMakeHistory(currentUser, currentUser.MaxBidAmount);
                 DrawMoneyAndMakeHistory(currentUser, amount);
                 var autoBid = AutoBids.FirstOrDefault(x => x.UserId == currentUser.Id);
                 autoBid?.DisableAutoBidding(); // because current user max bid is too low to carry anymore compared to max-bidder
