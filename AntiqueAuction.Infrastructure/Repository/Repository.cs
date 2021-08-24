@@ -23,13 +23,14 @@ namespace AntiqueAuction.Infrastructure.Repository
         }
         public IEnumerable<T> Get()
         {
-            Context.ChangeTracker.LazyLoadingEnabled = false;
+            DisableLazyLoading();
             return Entity.AsNoTracking().AsEnumerable();
         }
 
         public Task<T> Get(Guid id)
         {
-            return Entity.SingleOrDefaultAsync(s => s.Id == id);
+            DisableLazyLoading();
+            return Entity.FirstOrDefaultAsync(s => s.Id == id);
         }
         public async Task<T> Insert(T entity)
         {
@@ -48,6 +49,7 @@ namespace AntiqueAuction.Infrastructure.Repository
             {
                 throw new ArgumentNullException("entity");
             }
+            
             return Context.SaveChangesAsync();
         }
         public Task Update(IEnumerable<T> entity)
@@ -77,10 +79,7 @@ namespace AntiqueAuction.Infrastructure.Repository
             }
             Entity.Remove(entity);
         }
-
-        public Task SaveChanges()
-        {
-            return Context.SaveChangesAsync();
-        }
+        private void DisableLazyLoading() 
+            => Context.ChangeTracker.LazyLoadingEnabled = false;
     }
 }

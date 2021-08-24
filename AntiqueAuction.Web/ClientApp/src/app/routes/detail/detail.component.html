@@ -11,10 +11,11 @@
             <!--begin::Card-->
             <div class="card card-custom gutter-b">
                 <!--begin::Card Body-->
-                <div class=" d-flex rounded  flex-column flex-md-row flex-lg-column flex-xxl-row" *ngIf="(item$|async) as item">
+                <div class=" d-flex rounded  flex-column flex-md-row flex-lg-column flex-xxl-row"
+                    *ngIf="(item$|async) as item">
                     <!--begin::Image-->
                     <div class="bgi-no-repeat bgi-position-center bgi-size-cover h-300px h-md-auto h-lg-300px h-xxl-auto mw-100 w-550px"
-                    [ngStyle]="{'background-image': 'url(' + api + '/img/'+item.image+')'}"></div>
+                        [ngStyle]="{'background-image': 'url(' + api + '/img/'+item.image+')'}"></div>
                     <!--end::Image-->
                     <div class="card card-custom w-auto w-md-400px w-lg-auto w-xxl-400px ml-auto">
                         <!--begin::Body-->
@@ -51,13 +52,15 @@
                                 </div>
                                 <div class="d-flex mb-3">
                                     <span class="text-dark-50 flex-root font-weight-bold">Start</span>
-                                    <span class="text-dark flex-root font-weight-bold">{{item.auctionStart| date}}</span>
+                                    <span class="text-dark flex-root font-weight-bold">{{item.auctionStart|
+                                        date}}</span>
                                 </div>
                                 <div class="d-flex mb-3">
                                     <span class="text-dark-50 flex-root font-weight-bold">End</span>
                                     <span class="text-dark flex-root font-weight-bold">{{item.auctionEnd|date}}</span>
                                 </div>
                             </div>
+                            <div class="text-danger mb-1" *ngIf="errorMsg">{{errorMsg}}</div>
                             <!-- end::Specs-->
                             <div class="d-flex">
                                 <!-- begin:Bid Now-->
@@ -75,15 +78,17 @@
                                             <ul class="navi">
                                                 <li class="navi-item">
                                                     <a class="navi-link flex-column ">
-                                                        <input type="email" class="form-control" placeholder="Enter amount">
-                                                            <span class="form-text text-muted align-self-start ml-1">Must enter {{item.lastBid+1} or above</span>
+                                                        <input  [(ngModel)]="bidAmount" type="number" class="form-control"
+                                                            placeholder="Enter amount">
+                                                        <span class="form-text text-muted align-self-start ml-1">Must
+                                                            enter {{item.lastBid!+1}} or above</span>
                                                     </a>
                                                 </li>
 
                                                 <li class="navi-separator mt-3 opacity-70"></li>
                                                 <li class="navi-footer pt-5 pb-4">
-                                                    <a class="btn btn-light-primary font-weight-bolder btn-sm"
-                                                        (click)="bidNowToggle$.next(true)">Submit Bid</a>
+                                                    <a [class.disabled]="bidAmount<((item.lastBid!+1)|| (item!.price)!)" class="btn btn-light-primary font-weight-bolder btn-sm" (click)="bidNow()">Submit
+                                                        Bid</a>
                                                     <a class="btn btn-clean font-weight-bold btn-sm d-none" href="#"
                                                         data-toggle="tooltip" data-placement="right" title=""
                                                         data-original-title="Click to learn more...">Learn more</a>
@@ -96,16 +101,19 @@
                                 </div>
                                 <!-- end:Bid Now-->
                                 <!-- begin:Auto Bid-->
-                                <div class="d-flex align-items-center mr-7">
-
-                                    <a href="#" class="btn btn-outline-secondary">
-                                        <i class="flaticon2-poll-symbol"></i> Enable AutoBid
-                                    </a>
-
-                                    <!-- <a href="#" class="btn btn-outline-success">
-                                                            <i class="flaticon2-check-mark"></i> AutoBid Enabled
-                                                        </a> -->
+                                <div class="d-flex align-items-center mr-7" >
+                                    <a href="#" class="btn btn-outline-success" *ngIf="(isAutoBidEnabled$| async);else enable">
+                                        <i class="flaticon2-check-mark"></i> AutoBid Enabled
+                                    </a> 
+                                   
+                                    <ng-template #enable>
+                                        <a class="btn btn-outline-secondary" >
+                                            <i class="flaticon2-poll-symbol"></i> Enable AutoBid
+                                        </a>
+                                    </ng-template>
+                                     
                                 </div>
+                               
                                 <!-- end:Auto Bid-->
                             </div>
 
@@ -114,7 +122,7 @@
                         <!--end::Body-->
                         <!--begin::Footer-->
                         <div class="card-footer p-3 d-flex justify-content-center">
-                            <app-countdown></app-countdown>
+                            <app-countdown [endDate]="item.auctionEnd!"></app-countdown>
                         </div>
                         <!--end::Footer-->
                     </div>
@@ -136,7 +144,7 @@
                 <!--end::Header-->
                 <!--begin::Body-->
                 <div class="card-body py-0">
-                    <app-bids-history></app-bids-history>
+                    <app-bids-history [bidsHistory]="bidsHistory$ |async"></app-bids-history>
                 </div>
                 <!--end::Body-->
             </div>

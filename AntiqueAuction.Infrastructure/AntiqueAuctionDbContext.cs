@@ -34,6 +34,14 @@ namespace AntiqueAuction.Infrastructure
         public DbSet<User> User { get; set; } 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes()
+                .Where(e => typeof(Entity).IsAssignableFrom(e.ClrType)))
+            {
+                modelBuilder
+                    .Entity(entityType.ClrType)
+                    .Property(nameof(Entity.Id))
+                    .ValueGeneratedNever();
+            }
             // This Converter will perform the conversion to and from Json to the desired type
             modelBuilder.Entity<User>().Property(e => e.Address).HasConversion(
                 v => JsonSerializer.Serialize(v, new JsonSerializerOptions { IgnoreNullValues = true}),

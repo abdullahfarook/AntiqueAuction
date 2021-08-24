@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using AntiqueAuction.Application.BidHistory;
 using AntiqueAuction.Core.Events;
 using AntiqueAuction.Infrastructure;

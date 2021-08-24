@@ -11,7 +11,7 @@ namespace AntiqueAuction.Application.BidHistory
     {
         public Task Handle(BidPlaced @event, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

@@ -16,9 +16,9 @@ namespace AntiqueAuction.Core.Models
         public BidHistory(Item item, User user, double amount)
         {
             ItemId = item.Id;
-            Item = item;
             UserId = user.Id;
             Item = item;
+            User = user;
             Amount = amount;
         }
     }

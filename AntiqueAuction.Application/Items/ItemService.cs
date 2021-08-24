@@ -28,7 +28,7 @@ namespace AntiqueAuction.Application.Items
         {
             Validate(command);
             var (user, item) = await Get(command.UserId, command.ItemId);
-            item.CreateOrUpdateAutoBid(user, command.IncrementFactor,command.MaxBidAmount);
+            item.CreateOrUpdateAutoBid(user, 1,user.MaxBidAmount);
             await _itemRepository.Update(item);
         }
 

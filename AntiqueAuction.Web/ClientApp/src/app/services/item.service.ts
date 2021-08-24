@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Generated, AutoBid, AutomateBid, Item, PlaceBid } from 'src/generated/services';
 import { PageInfo, PageResult } from '../core/models/page-result';
+import { AuthService } from './auth.service';
 import { BaseService } from './base.service';
 
 @Injectable({
@@ -12,19 +13,19 @@ import { BaseService } from './base.service';
 })
 export class ItemService extends BaseService {
 
+
   url: string =environment.apiUrl+ '/api/items';
 
-  constructor(private http: HttpClient, private generatedService: Generated) {
+  constructor(private http: HttpClient, private generatedService: Generated,private authService:AuthService) {
     super();
   }
   // get items
-  getItems(search?:string,priceSort?:string,page?:PageInfo): Promise<PageResult<Item>> {
+  getItems(search?:string,priceSort?:string,page?:PageInfo): Observable<PageResult<Item>> {
     var query = `${this.url}?`
     if(search){
       query = `${query}&namecontains=${search}&descriptioncontains=${search}`;
     }
     if(priceSort){
-      console.log(priceSort)
       query = `${query}&$orderby=${priceSort ==='asc'?'price':'-price'}`;
     }
     if(page){
@@ -38,9 +39,19 @@ export class ItemService extends BaseService {
         (x)=>
           new PageResult<Item>(x,page)
       )
-    ).toPromise();
+    );
   }
+  isAutoBidEnabled(itemId: string): Observable<boolean> {
+    var query = `${this.url}?id=${itemId}&select=autobids&autobids.userid=${this.authService.authUser?.id}&autobids.isactive=true`
 
+    return this.http.get<Item[]>(query).pipe(
+      map(
+        (x)=>
+        x.length && x[0].autoBids && x[0].autoBids.length 
+        && x[0].autoBids[0].userId == this.authService.authUser?.id?true:false
+      )
+    );
+  }
   getItem(id:string):Observable<Item>{
     var query = `${this.url}?id=${id}`
 
@@ -58,10 +69,9 @@ export class ItemService extends BaseService {
       amount: amount
     }).toPromise();
   }
-  createOrUpdateAutoBidding(id: string, maxAmount: number): Promise<void> {
+  createOrUpdateAutoBidding(id: string): Promise<void> {
     return this.generatedService.itemsPUT(<AutomateBid>{
       itemId: id,
-      maxBidAmount:maxAmount
     }).toPromise();
   }
 

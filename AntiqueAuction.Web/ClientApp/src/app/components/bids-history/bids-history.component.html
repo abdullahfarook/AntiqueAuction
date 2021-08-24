@@ -22,44 +22,38 @@
                         <!--end::Svg Icon-->
                     </span>
                 </th>
-                <th style="min-width: 120px">Company</th>
+                <th style="min-width: 120px">Type</th>
                 <th style="min-width: 120px">Date</th>
             </tr>
         </thead>
         <tbody>
-            <ng-template *ngTemplateOutlet="rowBidHist;"></ng-template>
-            <ng-template *ngTemplateOutlet="rowBidHist;"></ng-template>
-            <ng-template *ngTemplateOutlet="rowBidHist;"></ng-template>
+            <tr *ngFor="let history of bidsHistory">
+                <ng-template  *ngTemplateOutlet="rowBidHist;context:{$implicit:history}"></ng-template>
+            </tr>
         </tbody>
     </table>
 </div>
 <!--end::Table-->
 <!-- begin::Bids History Row Templace-->
-<ng-template #rowBidHist let-bid>
-    <tr>
-        <td class="pl-0 py-6">
+<ng-template #rowBidHist let-history>
+    <td class="pl-0 py-6">
             
-        </td>
-        <td class="pl-0">
-            <a href="#" class="text-dark-75 font-weight-bolder text-hover-primary font-size-lg">56037-XDER</a>
-        </td>
-        <td>
-            <span class="text-dark-75 font-weight-bolder d-block font-size-lg">Brasil</span>
-            <span class="text-muted font-weight-bold">Code: BR</span>
-        </td>
-        <td>
-            <span class="text-primary font-weight-bolder d-block font-size-lg">7:38:05 AM</span>
-            <span class="text-muted font-weight-bold">Paid</span>
-        </td>
-        <td>
-            <span class="text-dark-75 font-weight-bolder d-block font-size-lg">Intertico</span>
-            <span class="text-muted font-weight-bold">Web, UI/UX Design</span>
-        </td>
-        <td>
-            <span class="text-dark-75 font-weight-bolder d-block font-size-lg">05/28/2020</span>
-            <!-- <span class="label label-lg label-light label-inline">7:38:05 AM</span> -->
-        </td>
-       
-    </tr>
+    </td>
+    <td class="pl-0">
+        <a href="#" class="text-dark-75 font-weight-bolder text-hover-primary font-size-lg">{{history?.user?.name}}</a>
+    </td>
+    <td>
+        <span class="text-dark-75 font-weight-bolder d-block font-size-lg">$ {{history.amount}}</span>
+    </td>
+    <td>
+        <span class="text-primary font-weight-bolder d-block font-size-lg">{{history.createdOn | date:'h:mm a'}}</span>
+    </td>
+    <td>
+        <span class="text-dark-75 font-weight-bolder d-block font-size-lg">Regular</span>
+    </td>
+    <td>
+        <span class="text-dark-75 font-weight-bolder d-block font-size-lg">{{history.createdOn | date:'M/d/yy'}}</span>
+        <!-- <span class="label label-lg label-light label-inline">7:38:05 AM</span> -->
+    </td>
 </ng-template>
 <!-- end::Bids History Row Templace-->

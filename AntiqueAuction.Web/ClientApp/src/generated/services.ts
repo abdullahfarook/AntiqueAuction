@@ -552,8 +552,6 @@ export interface IAutoBid {
 export class AutomateBid implements IAutomateBid {
     itemId?: string;
     userId?: string;
-    incrementFactor?: number;
-    maxBidAmount?: number;
 
     constructor(data?: IAutomateBid) {
         if (data) {
@@ -568,8 +566,6 @@ export class AutomateBid implements IAutomateBid {
         if (_data) {
             this.itemId = _data["itemId"];
             this.userId = _data["userId"];
-            this.incrementFactor = _data["incrementFactor"];
-            this.maxBidAmount = _data["maxBidAmount"];
         }
     }
 
@@ -584,8 +580,6 @@ export class AutomateBid implements IAutomateBid {
         data = typeof data === 'object' ? data : {};
         data["itemId"] = this.itemId;
         data["userId"] = this.userId;
-        data["incrementFactor"] = this.incrementFactor;
-        data["maxBidAmount"] = this.maxBidAmount;
         return data; 
     }
 }
@@ -593,8 +587,6 @@ export class AutomateBid implements IAutomateBid {
 export interface IAutomateBid {
     itemId?: string;
     userId?: string;
-    incrementFactor?: number;
-    maxBidAmount?: number;
 }
 
 export class BidHistory implements IBidHistory {

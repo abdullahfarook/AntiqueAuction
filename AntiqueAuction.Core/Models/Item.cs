@@ -138,10 +138,11 @@ namespace AntiqueAuction.Core.Models
             if(user.WalletAmount-amount<0)
                 throw new UnprocessableException($"User does not have enough money to spent upon auction");
 
-            if (amount <= LastBid || amount <= Price)
-                throw new UnprocessableException(
-                    "Cannot Bid because amount is equal or less than Last Bid Amount");
-            
+            if (amount <= LastBid )
+                throw new UnprocessableException("Amount must be greater than Last Bid Amount");
+            if(amount <= Price)
+                throw new UnprocessableException("Amount must be greater than Price of Item");
+
             // Check if last bidder is the user requesting for bidding
             var lastBidderHistory = BidHistories.OrderByDescending(x => x.CreatedOn).FirstOrDefault();
             if (lastBidderHistory is { } && lastBidderHistory.UserId == user.Id)

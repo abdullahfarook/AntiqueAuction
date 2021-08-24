@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { interval, Subject } from 'rxjs';
 
 @Component({
@@ -7,23 +7,33 @@ import { interval, Subject } from 'rxjs';
   styleUrls: ['./countdown.component.scss']
 })
 export class CountdownComponent implements OnInit {
+  
+  private _endDate!: Date;
+  public get endDate() : Date {
+    return this._endDate;
+  }
   @Input()
-  timeRange!: TimeSpan;
+  public set endDate(v : Date) {
+    this._endDate = v;
+    this.setTimer();
+  }
+  
   public counter:TimeSpan = {days:0,hours:0,minutes:0,seconds:0}
   func =
   '' +
   '<span class="h1 font-weight-bold">1</span> Day' +
   '<span class="h1 font-weight-bold">5</span> Hr' +
   '<span class="h1 font-weight-bold">30</span> Min';
-  constructor(private changeDetector: ChangeDetectorRef) {}
+  constructor() {}
 
   private destroyed$ = new Subject();
 
 ngOnInit() {
-  var ms = new Date().getTime() + 87400000;
-var tomorrow = new Date(ms);
+  this.setTimer();
+}
+setTimer(){
   interval(1000).subscribe(() => {
-    this.getElapsedTime({endDate:tomorrow});
+    this.getElapsedTime({endDate:new Date(this.endDate)});
   });
 }
 
