@@ -25,12 +25,6 @@ namespace AntiqueAuction.Web.Controllers
             command.UserId = AuthUser!.Id;
             return itemService.Handle(command);
         }
-        [HttpPut]
-        [Authorize]
-        public Task AutomateBid([FromBody] AutomateBid command, [FromServices] IItemService itemService)
-        {
-            command.UserId = AuthUser!.Id;
-            return itemService.Handle(command);
-        }
+       
     }
 }

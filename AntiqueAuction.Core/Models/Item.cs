@@ -46,26 +46,34 @@ namespace AntiqueAuction.Core.Models
             Description = description;
         }
 
-        public void CreateOrUpdateAutoBid(User user, float incrementPerUnit, double maxBidAmount)
+        public void EnableAutoBid(User user, float incrementPerUnit)
+            => CreateOrUpdateAutoBid(user, incrementPerUnit);
+        public void CreateOrUpdateAutoBid(User user, float incrementPerUnit)
         {
             var autoBid = AutoBids.FirstOrDefault(x => x.UserId == user.Id);
 
             if (autoBid is null)
             {
-                autoBid = new AutoBid(this, user, incrementPerUnit, maxBidAmount);
+                autoBid = new AutoBid(this, user);
                 AutoBids.Add(autoBid);
             }
             else
-                autoBid.Update(incrementPerUnit, maxBidAmount);
+            {
+                autoBid.EnableAutoBidding();
+            }
 
-            if(maxBidAmount<LastBid)
-                return;
+            if (user.MaxBidAmount <= LastBid)
+            {
+                autoBid.DisableAutoBidding();
+                throw new UnprocessableException("Max bid amount must be greater than Current Bid");
+            }
             
             var maxBid = BidHistories
                 .OrderByDescending(x => x.Amount)
                 .FirstOrDefault();
             if(maxBid is {} && maxBid.UserId == user.Id)
                 return;
+
             var amount = maxBid is {}? maxBid!.Amount + incrementPerUnit: Price + incrementPerUnit;
             try
             {
@@ -83,40 +91,58 @@ namespace AntiqueAuction.Core.Models
             BidUsingHighestBidder(user, amount);
         }
 
-        private void BidUsingHighestBidder(User currentUser, double amount,int skip = 0)
+        private void BidUsingHighestBidder(User currentUser, double amount,int highBidderOrder = 0)
         {
             // Check in AutoBid section, if there exist high bidder than current user
-            var maxBid = AutoBids.Where(x => x.UserId != currentUser.Id && x.IsActive)
-                .OrderByDescending(x => x.MaxBidAmount).Skip(skip).Take(1).FirstOrDefault();
+            var maxAutoBid = AutoBids.Where(x => x.UserId != currentUser.Id && x.IsActive)
+                .OrderByDescending(x => x.User.MaxBidAmount).Skip(highBidderOrder).Take(1).FirstOrDefault();
 
-            if (maxBid is { } && maxBid.MaxBidAmount+maxBid.IncrementPerUnit > amount)
+            // if max-bidder has auto-bidding enabled
+            if (maxAutoBid is { } && maxAutoBid.User.MaxBidAmount > currentUser.MaxBidAmount)
             {
                 // store history of current user bidding 
-                BidHistories.Add(new BidHistory(this, currentUser, amount));
-                RaiseDomainEvent(new BidPlaced(Id, currentUser.Id, amount));
+                //DrawMoneyAndMakeHistory(currentUser, currentUser.MaxBidAmount);
+                DrawMoneyAndMakeHistory(currentUser, amount);
+                var autoBid = AutoBids.FirstOrDefault(x => x.UserId == currentUser.Id);
+                autoBid?.DisableAutoBidding(); // because current user max bid is too low to carry anymore compared to max-bidder
                 try
                 {
                     // Bid using highest bidder reserves
-                    var incrementedValue = amount + maxBid.IncrementPerUnit;
-                    DrawMoneyAndMakeHistory(maxBid.User, incrementedValue);
+                    var maxBidder = maxAutoBid.User;
+                    var incrementedValue = amount + 1;
+                    DrawMoneyAndMakeHistory(maxBidder, incrementedValue);
+                    LastBid = incrementedValue;
+                    RaiseDomainEvent(new BidPlaced(Id, maxBidder.Id, LastBid));
+                    return;
                 }
                 catch (UnprocessableException)
                 {
-                    // if reserves are not enough, we disable his auto-bidding and check for next user
-                    maxBid.DisableAutoBidding();
-                    BidUsingHighestBidder(currentUser,amount,++skip);
+                    // if reserves are not enough, we disable his auto-bidding and check for next high bidder
+                    maxAutoBid.DisableAutoBidding();
+                    // disseminate the effect
+                    NegateDrawMoneyAndMakeHistory(currentUser, amount);
+                    BidUsingHighestBidder(currentUser, amount, ++highBidderOrder);
+                    return;
                 }
             }
-            else // if there is no highest bidder, we consider current user to be highest
-                DrawMoneyAndMakeHistory(currentUser, amount);
+            // means current user becomes highest bidder;
+            maxAutoBid?.DisableAutoBidding();
+            amount = maxAutoBid?.User?.MaxBidAmount+1 ?? amount;
+            DrawMoneyAndMakeHistory(currentUser, amount);
+            LastBid = amount;
+            RaiseDomainEvent(new BidPlaced(Id, currentUser.Id, LastBid));
         }
 
         private void DrawMoneyAndMakeHistory(User user, double amount)
         {
             user.DrawMoney(amount - LastBid);
-            LastBid = amount;
-            BidHistories.Add(new BidHistory(this, user, LastBid));
-            RaiseDomainEvent(new BidPlaced(Id, user.Id, LastBid));
+            BidHistories.Add(new BidHistory(this, user, amount));
+        }
+        private void NegateDrawMoneyAndMakeHistory(User user, double amount)
+        {
+            user.AddMoney(amount - LastBid);
+            var bidHistory = BidHistories.LastOrDefault(x => x.UserId == user.Id);
+            if(bidHistory is {}) BidHistories.Remove(bidHistory);
         }
 
         public void ExpireNow()

@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ParseUtil } from 'src/app/core/utils';
+import { AutobidService } from 'src/app/services/autobid.service';
 import { BidsHistoryService } from 'src/app/services/bids-history.service';
 import { ItemService } from 'src/app/services/item.service';
 import { environment } from 'src/environments/environment';
@@ -20,31 +21,29 @@ export class DetailComponent implements OnInit {
   errorMsg:string|undefined;
   item$!:Observable<Item>;
   bidsHistory$!:Observable<BidHistory[]>;
-  isAutoBidEnabled$:BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isAutoBidEnabled= false;
   constructor(
     private itemService:ItemService,
     private bidHistoryService:BidsHistoryService,
+    private autoBid:AutobidService,
     route:ActivatedRoute) {
     const itemId =  route.snapshot.params.id!;
     this.getDetailAndHistory(itemId)
-    this.getAutoBidEnable(itemId);
     this.itemId = itemId;
   }
   ngOnInit(): void {
     window.scroll(0, 0);
   }
-  getAutoBidEnable(itemId:string){
-    this.itemService.isAutoBidEnabled(itemId).subscribe(this.isAutoBidEnabled$);
-  }
   getDetailAndHistory(itemId:string){
     this.item$ = this.itemService.getItem(itemId);
     this.bidsHistory$ = this.bidHistoryService.getBidsHistory(itemId);
+    this.autoBid.isAutoBidEnabled(itemId).subscribe(x=> this.isAutoBidEnabled = x);
   }
   async enableAutoBid(){
     try {
       this.errorMsg = undefined;
-      await this.itemService.createOrUpdateAutoBidding(this.itemId);
-      this.getAutoBidEnable(this.itemId);
+      await this.autoBid.enableAutoBid(this.itemId);
+      this.getDetailAndHistory(this.itemId);
     } catch (error) {
       this.errorMsg = ParseUtil.error(error)?.description;
       

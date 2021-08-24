@@ -1,14 +1,16 @@
 import { ServerError } from "./models/error";
 
 export class ParseUtil {
-    public static error(error:any):ServerError|null{
-        var response = error.response;
-        if(!response) return null;
+    private static DefaultError:ServerError = {
+      code:500,
+      description:"Something went wrong",
+    };
+    public static error(error:any):ServerError{
         try {
-            const result =  JSON.parse(response,this.toCamelCase);
+            const result =  JSON.parse(error?.response,this.toCamelCase);
             return result
         } catch (error) {
-            return null;
+          return this.DefaultError; 
         }
         
     }

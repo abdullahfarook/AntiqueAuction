@@ -2,7 +2,7 @@
 
 namespace AntiqueAuction.Application.Items.Dtos
 {
-    public class AutomateBid
+    public class EnableBid
     {
         public Guid ItemId { get; set; }
         public Guid UserId { get; set; }

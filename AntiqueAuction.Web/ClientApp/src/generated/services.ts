@@ -197,6 +197,123 @@ export class Generated extends BaseService {
     /**
      * @return Success
      */
+    autoBidsAll(itemId: string): Observable<AutoBid[]> {
+        let url_ = this.baseUrl + "/api/items/{itemId}/auto-bids";
+        if (itemId === undefined || itemId === null)
+            throw new Error("The parameter 'itemId' must be defined.");
+        url_ = url_.replace("{itemId}", encodeURIComponent("" + itemId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processAutoBidsAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAutoBidsAll(<any>response_);
+                } catch (e) {
+                    return <Observable<AutoBid[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AutoBid[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAutoBidsAll(response: HttpResponseBase): Observable<AutoBid[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AutoBid.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AutoBid[]>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    autoBids(body: EnableBid | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/auto-bids";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("put", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processAutoBids(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAutoBids(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAutoBids(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     bidsHistory(): Observable<BidHistory[]> {
         let url_ = this.baseUrl + "/api/bids-history";
         url_ = url_.replace(/[?&]$/, "");
@@ -318,7 +435,7 @@ export class Generated extends BaseService {
      * @param body (optional) 
      * @return Success
      */
-    itemsPOST(body: PlaceBid | undefined): Observable<void> {
+    items(body: PlaceBid | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/items";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -336,11 +453,11 @@ export class Generated extends BaseService {
         return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
             return this.http.request("post", url_, transformedOptions_);
         })).pipe(_observableMergeMap((response_: any) => {
-            return this.processItemsPOST(response_);
+            return this.processItems(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processItemsPOST(<any>response_);
+                    return this.processItems(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -349,61 +466,7 @@ export class Generated extends BaseService {
         }));
     }
 
-    protected processItemsPOST(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    itemsPUT(body: AutomateBid | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/items";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
-            return this.http.request("put", url_, transformedOptions_);
-        })).pipe(_observableMergeMap((response_: any) => {
-            return this.processItemsPUT(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processItemsPUT(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processItemsPUT(response: HttpResponseBase): Observable<void> {
+    protected processItems(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -481,8 +544,6 @@ export class AutoBid implements IAutoBid {
     readonly updatedOn?: Date;
     readonly itemId?: string;
     readonly userId?: string;
-    readonly incrementPerUnit?: number;
-    readonly maxBidAmount?: number;
     isActive?: boolean;
     item?: Item;
     user?: User;
@@ -505,8 +566,6 @@ export class AutoBid implements IAutoBid {
             (<any>this).updatedOn = _data["updatedOn"] ? new Date(_data["updatedOn"].toString()) : <any>undefined;
             (<any>this).itemId = _data["itemId"];
             (<any>this).userId = _data["userId"];
-            (<any>this).incrementPerUnit = _data["incrementPerUnit"];
-            (<any>this).maxBidAmount = _data["maxBidAmount"];
             this.isActive = _data["isActive"];
             this.item = _data["item"] ? Item.fromJS(_data["item"]) : <any>undefined;
             this.user = _data["user"] ? User.fromJS(_data["user"]) : <any>undefined;
@@ -527,8 +586,6 @@ export class AutoBid implements IAutoBid {
         data["updatedOn"] = this.updatedOn ? this.updatedOn.toISOString() : <any>undefined;
         data["itemId"] = this.itemId;
         data["userId"] = this.userId;
-        data["incrementPerUnit"] = this.incrementPerUnit;
-        data["maxBidAmount"] = this.maxBidAmount;
         data["isActive"] = this.isActive;
         data["item"] = this.item ? this.item.toJSON() : <any>undefined;
         data["user"] = this.user ? this.user.toJSON() : <any>undefined;
@@ -542,51 +599,9 @@ export interface IAutoBid {
     updatedOn?: Date;
     itemId?: string;
     userId?: string;
-    incrementPerUnit?: number;
-    maxBidAmount?: number;
     isActive?: boolean;
     item?: IItem;
     user?: IUser;
-}
-
-export class AutomateBid implements IAutomateBid {
-    itemId?: string;
-    userId?: string;
-
-    constructor(data?: IAutomateBid) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.itemId = _data["itemId"];
-            this.userId = _data["userId"];
-        }
-    }
-
-    static fromJS(data: any): AutomateBid {
-        data = typeof data === 'object' ? data : {};
-        let result = new AutomateBid();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["itemId"] = this.itemId;
-        data["userId"] = this.userId;
-        return data; 
-    }
-}
-
-export interface IAutomateBid {
-    itemId?: string;
-    userId?: string;
 }
 
 export class BidHistory implements IBidHistory {
@@ -653,6 +668,46 @@ export interface IBidHistory {
     amount?: number;
     item?: IItem;
     user?: IUser;
+}
+
+export class EnableBid implements IEnableBid {
+    itemId?: string;
+    userId?: string;
+
+    constructor(data?: IEnableBid) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.itemId = _data["itemId"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): EnableBid {
+        data = typeof data === 'object' ? data : {};
+        let result = new EnableBid();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["itemId"] = this.itemId;
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IEnableBid {
+    itemId?: string;
+    userId?: string;
 }
 
 export class GenerateToken implements IGenerateToken {

@@ -102,14 +102,14 @@
                                 <!-- end:Bid Now-->
                                 <!-- begin:Auto Bid-->
                                 <div class="d-flex align-items-center mr-7" >
-                                    <a href="#" class="btn btn-outline-success" *ngIf="(isAutoBidEnabled$| async);else enable">
+                                    <a href="#" class="btn btn-outline-success" *ngIf="isAutoBidEnabled">
                                         <i class="flaticon2-check-mark"></i> AutoBid Enabled
                                     </a> 
-                                   
+                                    <a *ngIf="!isAutoBidEnabled" class="btn btn-outline-secondary" (click)="enableAutoBid()">
+                                        <i class="flaticon2-poll-symbol"></i> Enable AutoBid
+                                    </a>
                                     <ng-template #enable>
-                                        <a class="btn btn-outline-secondary" >
-                                            <i class="flaticon2-poll-symbol"></i> Enable AutoBid
-                                        </a>
+                                       
                                     </ng-template>
                                      
                                 </div>

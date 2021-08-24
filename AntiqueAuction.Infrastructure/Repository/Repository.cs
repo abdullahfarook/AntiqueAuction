@@ -32,6 +32,10 @@ namespace AntiqueAuction.Infrastructure.Repository
             DisableLazyLoading();
             return Entity.FirstOrDefaultAsync(s => s.Id == id);
         }
+
+        public Task<T> Find(Guid id)
+        => Entity.SingleOrDefaultAsync(s => s.Id == id);
+
         public async Task<T> Insert(T entity)
         {
             if (entity == null)

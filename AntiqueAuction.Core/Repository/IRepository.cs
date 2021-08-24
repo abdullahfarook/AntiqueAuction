@@ -10,6 +10,7 @@ namespace AntiqueAuction.Core.Repository
     {
         IEnumerable<T> Get();  
         Task<T> Get(Guid id);
+        Task<T> Find(Guid id);
         Task<T> Insert(T entity);  
         Task Update(T entity);
         Task Update(IEnumerable<T> entity);

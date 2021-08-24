@@ -45,6 +45,18 @@ namespace AntiqueAuction.Core.Models
             }
             
         }
+        public void AddMoney(double money)
+        {
+            // enter a new locker object for each UserId if it's not already in dictionary
+            lock (_drawMoneyLocker.Enter(Id))
+            {
+                if (WalletAmount - money < 0)
+                    throw new UnprocessableException("Cannot Draw money which is greater than available money");
+                WalletAmount -= money;
+                _drawMoneyLocker.Release(Id);
+            }
+
+        }
 
         public void UpdateMaxBid(double amount)
         {
