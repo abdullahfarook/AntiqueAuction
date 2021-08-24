@@ -2,6 +2,13 @@
 
 This project is web auction application for an antique items seller. The application will allow users to bid on antique items displayed in the site and admin users to set up items for auction. Product management and auctioning are within the scope of the applicationl; shopping cart and payment integration are not.
 
+## Setup
+
+<ul><li>Install .Net Core 3.1 SDK</li><li>Install Node.js</li></ul>
+
+## App Credentials
+
+<ul><li>username: user1 password: abc123</li><li>username: user2 password: xyz987</li></ul>
 
 ## Onion Architecture In ASP.NET Core With Domain Driven Design and Angular as Frontend
 
